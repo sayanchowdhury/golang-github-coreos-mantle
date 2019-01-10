@@ -56,92 +56,67 @@ ExclusiveArch:  %{?go_arches:%{go_arches}}%{!?go_arches:%{ix86} x86_64 aarch64 %
 # If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
 BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
 
+# Main packages BuildRequires
 %if ! 0%{?with_bundled}
 # cmd/plume/specs.go
 BuildRequires: golang(github.com/spf13/pflag)
-
 # cmd/plume/index.go
 BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(golang.org/x/net/context)
-
 # cmd/kola/bootchart.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/cork/download.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/cork/build.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/kola/console.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/kola/spawn.go
 BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(golang.org/x/crypto/ssh)
 BuildRequires: golang(golang.org/x/crypto/ssh/agent)
-
 # cmd/plume/prerelease.go
 BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/storageservice)
 BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/validator)
 BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(golang.org/x/net/context)
 BuildRequires: golang(google.golang.org/api/storage/v1)
-
 # network/ntp/_ntpd/ntpd.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
-
 # cmd/gangue/gangue.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/kolet/kolet.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/plume/release.go
 BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(golang.org/x/net/context)
 BuildRequires: golang(google.golang.org/api/compute/v1)
 BuildRequires: golang(google.golang.org/api/storage/v1)
-
 # cmd/kola/kola.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/plume/plume.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/ore/ore.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/kola/updatepayload.go
 BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(golang.org/x/crypto/ssh/agent)
-
 # cmd/cork/cork.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
 BuildRequires: golang(github.com/spf13/cobra)
-
 # update/_dump/main.go
 BuildRequires: golang(github.com/golang/protobuf/proto)
-
 # cmd/cork/downloadimage.go
 BuildRequires: golang(github.com/spf13/cobra)
-
 # cmd/cork/create.go
 BuildRequires: golang(github.com/coreos/go-semver/semver)
 BuildRequires: golang(github.com/spf13/cobra)
 BuildRequires: golang(github.com/spf13/pflag)
 
 # Remaining dependencies not included in main packages
-BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management)
-BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/location)
-BuildRequires: golang(github.com/Azure/azure-sdk-for-go/storage)
-BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload)
-BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)
-BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)
-BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)
 BuildRequires: golang(github.com/aws/aws-sdk-go/aws)
 BuildRequires: golang(github.com/aws/aws-sdk-go/aws/awserr)
 BuildRequires: golang(github.com/aws/aws-sdk-go/aws/client)
@@ -154,6 +129,9 @@ BuildRequires: golang(github.com/aws/aws-sdk-go/service/iam)
 BuildRequires: golang(github.com/aws/aws-sdk-go/service/s3)
 BuildRequires: golang(github.com/aws/aws-sdk-go/service/s3/s3manager)
 BuildRequires: golang(github.com/aws/aws-sdk-go/service/sts)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/location)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/storage)
 BuildRequires: golang(github.com/coreos/container-linux-config-transpiler/config)
 BuildRequires: golang(github.com/coreos/container-linux-config-transpiler/config/platform)
 BuildRequires: golang(github.com/coreos/coreos-cloudinit/config)
@@ -177,6 +155,10 @@ BuildRequires: golang(github.com/coreos/pkg/multierror)
 BuildRequires: golang(github.com/digitalocean/godo)
 BuildRequires: golang(github.com/godbus/dbus)
 BuildRequires: golang(github.com/kballard/go-shellquote)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)
 BuildRequires: golang(github.com/packethost/packngo)
 BuildRequires: golang(github.com/pborman/uuid)
 BuildRequires: golang(github.com/pin/tftp)
@@ -202,89 +184,72 @@ BuildRequires: golang(google.golang.org/api/googleapi)
 
 # Main package Provides (via parsedeps.go)
 %if 0%{?with_bundled}
-Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/management)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
-Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/management/location)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
-Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/management/storageservice)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
-Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/storage)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload/concurrent)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload/progress)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/bat)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/block)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/block/bitmap)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/footer)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/header)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/header/parentlocator)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/reader)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/validator)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/vhdfile)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/writer)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
-Provides: bundled(golang(github.com/aws/aws-sdk-go/aws)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/awserr)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/awsutil)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
-Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/client)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/client/metadata)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/client)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/corehandlers)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
-Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/credentials)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/credentials/ec2rolecreds)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/credentials/endpointcreds)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/credentials/stscreds)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/credentials)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/defaults)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/ec2metadata)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/endpoints)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/request)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/session)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/aws/signer/v4)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
-Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/aws/aws-sdk-go/aws)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/ec2query)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
-Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/query)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/query/queryutil)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/query)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/rest)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/restxml)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/private/protocol/xml/xmlutil)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/service/ec2)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/service/iam)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
-Provides: bundled(golang(github.com/aws/aws-sdk-go/service/s3)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/service/s3/s3iface)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/service/s3/s3manager)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/aws/aws-sdk-go/service/s3)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
 Provides: bundled(golang(github.com/aws/aws-sdk-go/service/sts)) = %{version}-40bc7761a9f06daa574d20f2ad5454db02a05953
+Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/management/location)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
+Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/management/storageservice)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
+Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/management)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
+Provides: bundled(golang(github.com/Azure/azure-sdk-for-go/storage)) = %{version}-f8b0607613f19ae9509b5ed6fbfda56caf06d59d
 Provides: bundled(golang(github.com/beorn7/perks/quantile)) = %{version}-3a771d992973f24aa725d07868b467d1ddfceafb
-Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
 Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config/astyaml)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
 Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config/platform)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
 Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config/templating)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
-Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config/types)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
 Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config/types/util)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
+Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config/types)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
+Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/config)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
 Provides: bundled(golang(github.com/coreos/container-linux-config-transpiler/internal/util)) = %{version}-73f2769c53710f016a6036f4803ac5af1fbe23ea
 Provides: bundled(golang(github.com/coreos/coreos-cloudinit/config)) = %{version}-4c333e657bfbaa8f6594298b48324f45e6bf5961
 Provides: bundled(golang(github.com/coreos/etcd/alarm)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/auth)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/auth/authpb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/client)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/auth)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/clientv3)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/client)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/compactor)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/discovery)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/error)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/etcdserver)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api/etcdhttp)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api/v2http)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api/v2http/httptypes)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api/v2http)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/etcdserver/api)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/auth)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/etcdserverpb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/membership)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/etcdserver/stats)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/lease)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/etcdserver)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/lease/leasehttp)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/lease/leasepb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/mvcc)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/lease)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/mvcc/backend)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/mvcc/mvccpb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/mvcc)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/pkg/adt)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/pkg/contention)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/pkg/cpuutil)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
@@ -304,11 +269,11 @@ Provides: bundled(golang(github.com/coreos/etcd/pkg/tlsutil)) = %{version}-fca8a
 Provides: bundled(golang(github.com/coreos/etcd/pkg/transport)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/pkg/types)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/pkg/wait)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/raft)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/raft/raftpb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/rafthttp)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
-Provides: bundled(golang(github.com/coreos/etcd/snap)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/raft/raftpb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/raft)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/snap/snappb)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
+Provides: bundled(golang(github.com/coreos/etcd/snap)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/store)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/version)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
 Provides: bundled(golang(github.com/coreos/etcd/wal)) = %{version}-fca8add78a9d926166eb739b8e4a124434025ba3
@@ -320,40 +285,57 @@ Provides: bundled(golang(github.com/coreos/go-systemd/unit)) = %{version}-900284
 Provides: bundled(golang(github.com/coreos/ignition/config/shared/errors)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/shared/validations)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/util)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
-Provides: bundled(golang(github.com/coreos/ignition/config/v1)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/v1/types)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
-Provides: bundled(golang(github.com/coreos/ignition/config/v2_0)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
+Provides: bundled(golang(github.com/coreos/ignition/config/v1)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/v2_0/types)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
-Provides: bundled(golang(github.com/coreos/ignition/config/v2_1)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
+Provides: bundled(golang(github.com/coreos/ignition/config/v2_0)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/v2_1/types)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
-Provides: bundled(golang(github.com/coreos/ignition/config/v2_2)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
+Provides: bundled(golang(github.com/coreos/ignition/config/v2_1)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/v2_2/types)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
-Provides: bundled(golang(github.com/coreos/ignition/config/v2_3)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
+Provides: bundled(golang(github.com/coreos/ignition/config/v2_2)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/v2_3/types)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
+Provides: bundled(golang(github.com/coreos/ignition/config/v2_3)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/v2_4_experimental/types)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
-Provides: bundled(golang(github.com/coreos/ignition/config/validate)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/validate/astjson)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/validate/astnode)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/ignition/config/validate/report)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
+Provides: bundled(golang(github.com/coreos/ignition/config/validate)) = %{version}-2a88cd95b6812a70a7dad150f4cb18c5f028bc22
 Provides: bundled(golang(github.com/coreos/pkg/capnslog)) = %{version}-447b7ec906e523386d9c53be15b55a8ae86ea944
 Provides: bundled(golang(github.com/coreos/pkg/multierror)) = %{version}-447b7ec906e523386d9c53be15b55a8ae86ea944
 Provides: bundled(golang(github.com/cpuguy83/go-md2man/md2man)) = %{version}-71acacd42f85e5e82f70a55327789582a5200a90
 Provides: bundled(golang(github.com/digitalocean/godo/context)) = %{version}-7a32b5ce17203924a21366d5031032fd326d5051
 Provides: bundled(golang(github.com/gogo/protobuf/gogoproto)) = %{version}-342cbe0a04158f6dcb03ca0079991a51a4248c02
-Provides: bundled(golang(github.com/gogo/protobuf/proto)) = %{version}-342cbe0a04158f6dcb03ca0079991a51a4248c02
 Provides: bundled(golang(github.com/gogo/protobuf/protoc-gen-gogo/descriptor)) = %{version}-342cbe0a04158f6dcb03ca0079991a51a4248c02
+Provides: bundled(golang(github.com/gogo/protobuf/proto)) = %{version}-342cbe0a04158f6dcb03ca0079991a51a4248c02
 Provides: bundled(golang(github.com/golang/protobuf/proto)) = %{version}-8616e8ee5e20a1704615e6c8d7afcdac06087a67
-Provides: bundled(golang(github.com/golang/protobuf/ptypes)) = %{version}-8616e8ee5e20a1704615e6c8d7afcdac06087a67
 Provides: bundled(golang(github.com/golang/protobuf/ptypes/any)) = %{version}-8616e8ee5e20a1704615e6c8d7afcdac06087a67
 Provides: bundled(golang(github.com/golang/protobuf/ptypes/duration)) = %{version}-8616e8ee5e20a1704615e6c8d7afcdac06087a67
 Provides: bundled(golang(github.com/golang/protobuf/ptypes/timestamp)) = %{version}-8616e8ee5e20a1704615e6c8d7afcdac06087a67
+Provides: bundled(golang(github.com/golang/protobuf/ptypes)) = %{version}-8616e8ee5e20a1704615e6c8d7afcdac06087a67
 Provides: bundled(golang(github.com/google/go-querystring/query)) = %{version}-44c6ddd0a2342c386950e880b658017258da92fc
 Provides: bundled(golang(github.com/kylelemons/godebug/diff)) = %{version}-21cb3784d9bda523911b96719efba02b7e983256
 Provides: bundled(golang(github.com/kylelemons/godebug/pretty)) = %{version}-21cb3784d9bda523911b96719efba02b7e983256
 Provides: bundled(golang(github.com/matttproud/golang_protobuf_extensions/pbutil)) = %{version}-c12348ce28de40eed0136aa2b644d0ee0650e56c
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload/concurrent)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload/progress)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/upload)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/bat)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/block/bitmap)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/block)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/footer)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/header/parentlocator)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/header)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/reader)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/validator)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/vhdfile)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
+Provides: bundled(golang(github.com/Microsoft/azure-vhd-utils/vhdcore/writer)) = %{version}-43293b8d76460dd25093d216c95abc79342e1657
 Provides: bundled(golang(github.com/pin/tftp/netascii)) = %{version}-9ea92f6b1029bc1bf3072bba195c84bb9b0370e3
-Provides: bundled(golang(github.com/prometheus/client_golang/prometheus)) = %{version}-5cec1d0429b02e4323e042eb04dafdb079ddf568
 Provides: bundled(golang(github.com/prometheus/client_golang/prometheus/promhttp)) = %{version}-5cec1d0429b02e4323e042eb04dafdb079ddf568
+Provides: bundled(golang(github.com/prometheus/client_golang/prometheus)) = %{version}-5cec1d0429b02e4323e042eb04dafdb079ddf568
 Provides: bundled(golang(github.com/prometheus/client_model/go)) = %{version}-6f3806018612930941127f2a7c6c453ba2c527d2
 Provides: bundled(golang(github.com/prometheus/common/expfmt)) = %{version}-e3fb1a1acd7605367a2b378bc2e2f893c05174b7
 Provides: bundled(golang(github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg)) = %{version}-e3fb1a1acd7605367a2b378bc2e2f893c05174b7
@@ -368,37 +350,37 @@ Provides: bundled(golang(github.com/vmware/govmomi/ovf)) = %{version}-b63044e5f8
 Provides: bundled(golang(github.com/vmware/govmomi/property)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/session)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/task)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
-Provides: bundled(golang(github.com/vmware/govmomi/vim25)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/debug)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/methods)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/mo)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/progress)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/soap)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/types)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
+Provides: bundled(golang(github.com/vmware/govmomi/vim25)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(github.com/vmware/govmomi/vim25/xml)) = %{version}-b63044e5f833781eb7b305bc035392480ee06a82
 Provides: bundled(golang(go4.org/errorutil)) = %{version}-03efcb870d84809319ea509714dd6d19a1498483
 Provides: bundled(golang(golang.org/x/crypto/bcrypt)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/blowfish)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/cast5)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/curve25519)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
-Provides: bundled(golang(golang.org/x/crypto/ed25519)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/ed25519/internal/edwards25519)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
-Provides: bundled(golang(golang.org/x/crypto/openpgp)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
+Provides: bundled(golang(golang.org/x/crypto/ed25519)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/openpgp/armor)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/openpgp/elgamal)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/openpgp/errors)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/openpgp/packet)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/openpgp/s2k)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
-Provides: bundled(golang(golang.org/x/crypto/pkcs12)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
+Provides: bundled(golang(golang.org/x/crypto/openpgp)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/pkcs12/internal/rc2)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
-Provides: bundled(golang(golang.org/x/crypto/ssh)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
+Provides: bundled(golang(golang.org/x/crypto/pkcs12)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/ssh/agent)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/crypto/ssh/terminal)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
+Provides: bundled(golang(golang.org/x/crypto/ssh)) = %{version}-119f50887f8fe324fe2386421c27a11af014b64e
 Provides: bundled(golang(golang.org/x/net/bpf)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
-Provides: bundled(golang(golang.org/x/net/context)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
 Provides: bundled(golang(golang.org/x/net/context/ctxhttp)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
-Provides: bundled(golang(golang.org/x/net/http2)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
+Provides: bundled(golang(golang.org/x/net/context)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
 Provides: bundled(golang(golang.org/x/net/http2/hpack)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
+Provides: bundled(golang(golang.org/x/net/http2)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
 Provides: bundled(golang(golang.org/x/net/idna)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
 Provides: bundled(golang(golang.org/x/net/internal/iana)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
 Provides: bundled(golang(golang.org/x/net/internal/socket)) = %{version}-66aacef3dd8a676686c7ae3716979581e8b03c47
@@ -419,10 +401,9 @@ Provides: bundled(golang(golang.org/x/text/unicode/norm)) = %{version}-b19bf474d
 Provides: bundled(golang(golang.org/x/time/rate)) = %{version}-c06e80d9300e4443158a03817b8a8cb37d230320
 Provides: bundled(golang(google.golang.org/api/compute/v1)) = %{version}-c858ef4400610cbfd097ffc5f5c6e4a1a51eac86
 Provides: bundled(golang(google.golang.org/api/gensupport)) = %{version}-c858ef4400610cbfd097ffc5f5c6e4a1a51eac86
-Provides: bundled(golang(google.golang.org/api/googleapi)) = %{version}-c858ef4400610cbfd097ffc5f5c6e4a1a51eac86
 Provides: bundled(golang(google.golang.org/api/googleapi/internal/uritemplates)) = %{version}-c858ef4400610cbfd097ffc5f5c6e4a1a51eac86
+Provides: bundled(golang(google.golang.org/api/googleapi)) = %{version}-c858ef4400610cbfd097ffc5f5c6e4a1a51eac86
 Provides: bundled(golang(google.golang.org/api/storage/v1)) = %{version}-c858ef4400610cbfd097ffc5f5c6e4a1a51eac86
-Provides: bundled(golang(google.golang.org/appengine/internal)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/appengine/internal/app_identity)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/appengine/internal/base)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/appengine/internal/datastore)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
@@ -430,6 +411,7 @@ Provides: bundled(golang(google.golang.org/appengine/internal/log)) = %{version}
 Provides: bundled(golang(google.golang.org/appengine/internal/modules)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/appengine/internal/remote_api)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/appengine/internal/urlfetch)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
+Provides: bundled(golang(google.golang.org/appengine/internal)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/appengine/urlfetch)) = %{version}-a37df1387b4521194676d88c79230c613610d5f4
 Provides: bundled(golang(google.golang.org/cloud/compute/metadata)) = %{version}-022eb1645b78acb655755a0c1e185c68cd5c8eb3
 Provides: bundled(golang(google.golang.org/genproto/googleapis/rpc/status)) = %{version}-09f6ed296fc66555a25fe4ce95173148778dfa85
@@ -439,8 +421,8 @@ Provides: bundled(golang(google.golang.org/grpc/connectivity)) = %{version}-5b3c
 Provides: bundled(golang(google.golang.org/grpc/credentials)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
 Provides: bundled(golang(google.golang.org/grpc/grpclb/grpc_lb_v1/messages)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
 Provides: bundled(golang(google.golang.org/grpc/grpclog)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
-Provides: bundled(golang(google.golang.org/grpc/health)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
 Provides: bundled(golang(google.golang.org/grpc/health/grpc_health_v1)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
+Provides: bundled(golang(google.golang.org/grpc/health)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
 Provides: bundled(golang(google.golang.org/grpc/internal)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
 Provides: bundled(golang(google.golang.org/grpc/keepalive)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
 Provides: bundled(golang(google.golang.org/grpc/metadata)) = %{version}-5b3c4e850e90a4cf6a20ebd46c8b32a0a3afcb9e
@@ -461,7 +443,7 @@ Provides: bundled(golang(google.golang.org/grpc/transport)) = %{version}-5b3c4e8
 Summary:       %{summary}
 BuildArch:     noarch
 
-# devel package BuildRequires
+# devel subpackage BuildRequires
 %if 0%{?with_check} && ! 0%{?with_bundled}
 BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management)
 BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/location)
@@ -539,7 +521,7 @@ BuildRequires: golang(google.golang.org/api/googleapi)
 BuildRequires: golang(google.golang.org/api/storage/v1)
 %endif
 
-# devel package Requires
+# devel subpackage Requires
 Requires:      golang(github.com/Azure/azure-sdk-for-go/management)
 Requires:      golang(github.com/Azure/azure-sdk-for-go/management/location)
 Requires:      golang(github.com/Azure/azure-sdk-for-go/management/storageservice)
@@ -615,7 +597,7 @@ Requires:      golang(google.golang.org/api/compute/v1)
 Requires:      golang(google.golang.org/api/googleapi)
 Requires:      golang(google.golang.org/api/storage/v1)
 
-# devel package Provides
+# devel subpackage Provides
 Provides:      golang(%{import_path}/auth) = %{version}-%{release}
 Provides:      golang(%{import_path}/cli) = %{version}-%{release}
 Provides:      golang(%{import_path}/cmd/ore/aws) = %{version}-%{release}
