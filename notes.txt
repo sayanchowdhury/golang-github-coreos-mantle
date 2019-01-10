@@ -6,6 +6,7 @@ The instructions uses gofed as a tool to build the spec file from the Go repo.
 
 ```
 $ podman run -it --rm -v $PWD:/foo/:z  --entrypoint /bin/bash gofed/gofed:v1.0.1
+$ cd /foo
 ```
 
 ```
