@@ -1,0 +1,633 @@
+# If any of the following macros should be set otherwise,
+# you can wrap any of them with the following conditions:
+# - %%if 0%%{centos} == 7
+# - %%if 0%%{?rhel} == 7
+# - %%if 0%%{?fedora} == 23
+# Or just test for particular distribution:
+# - %%if 0%%{centos}
+# - %%if 0%%{?rhel}
+# - %%if 0%%{?fedora}
+#
+# Be aware, on centos, both %%rhel and %%centos are set. If you want to test
+# rhel specific macros, you can use %%if 0%%{?rhel} && 0%%{?centos} == 0 condition.
+# (Don't forget to replace double percentage symbol with single one in order to apply a condition)
+
+# Generate devel rpm
+%global with_devel 1
+# Build project from bundled dependencies
+%global with_bundled 0
+# Build with debug info rpm
+%global with_debug 1
+# Run tests in check section
+%global with_check 1
+# Generate unit-test rpm
+%global with_unit_test 1
+
+%if 0%{?with_debug}
+%global _dwz_low_mem_die_limit 0
+%else
+%global debug_package   %{nil}
+%endif
+
+%if ! 0%{?gobuild:1}
+%define gobuild(o:) go build -ldflags "${LDFLAGS:-} -B 0x$(head -c20 /dev/urandom|od -An -tx1|tr -d ' \\n')" -a -v -x %{?**};
+%endif
+
+%global provider        github
+%global provider_tld    com
+%global project         coreos
+%global repo            mantle
+# https://github.com/coreos/mantle
+%global provider_prefix %{provider}.%{provider_tld}/%{project}/%{repo}
+%global import_path     %{provider_prefix}
+%global commit          490b74e13080d984385ccc2daec22d995a483d3f
+%global shortcommit     %(c=%{commit}; echo ${c:0:7})
+
+Name:           golang-%{provider}-%{project}-%{repo}
+Version:        0
+Release:        0.1.git%{shortcommit}%{?dist}
+Summary:        !!!!FILL!!!!
+# Detected licences
+# - Unknown at 'LICENSE'
+License:        !!!!FILL!!!!
+URL:            https://%{provider_prefix}
+Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
+
+# e.g. el6 has ppc64 arch without gcc-go, so EA tag is required
+ExclusiveArch:  %{?go_arches:%{go_arches}}%{!?go_arches:%{ix86} x86_64 aarch64 %{arm}}
+# If go_compiler is not set to 1, there is no virtual provide. Use golang instead.
+BuildRequires:  %{?go_compiler:compiler(go-compiler)}%{!?go_compiler:golang}
+
+%if ! 0%{?with_bundled}
+# cmd/plume/specs.go
+BuildRequires: golang(github.com/spf13/pflag)
+
+# cmd/plume/index.go
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(golang.org/x/net/context)
+
+# cmd/kola/bootchart.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/cork/download.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/cork/build.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/kola/console.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/kola/spawn.go
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(golang.org/x/crypto/ssh)
+BuildRequires: golang(golang.org/x/crypto/ssh/agent)
+
+# cmd/plume/prerelease.go
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/storageservice)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/validator)
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(golang.org/x/net/context)
+BuildRequires: golang(google.golang.org/api/storage/v1)
+
+# network/ntp/_ntpd/ntpd.go
+BuildRequires: golang(github.com/coreos/pkg/capnslog)
+
+# cmd/gangue/gangue.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/kolet/kolet.go
+BuildRequires: golang(github.com/coreos/pkg/capnslog)
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/plume/release.go
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(golang.org/x/net/context)
+BuildRequires: golang(google.golang.org/api/compute/v1)
+BuildRequires: golang(google.golang.org/api/storage/v1)
+
+# cmd/kola/kola.go
+BuildRequires: golang(github.com/coreos/pkg/capnslog)
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/plume/plume.go
+BuildRequires: golang(github.com/coreos/pkg/capnslog)
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/ore/ore.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/kola/updatepayload.go
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(golang.org/x/crypto/ssh/agent)
+
+# cmd/cork/cork.go
+BuildRequires: golang(github.com/coreos/pkg/capnslog)
+BuildRequires: golang(github.com/spf13/cobra)
+
+# update/_dump/main.go
+BuildRequires: golang(github.com/golang/protobuf/proto)
+
+# cmd/cork/downloadimage.go
+BuildRequires: golang(github.com/spf13/cobra)
+
+# cmd/cork/create.go
+BuildRequires: golang(github.com/coreos/go-semver/semver)
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(github.com/spf13/pflag)
+
+# Remaining dependencies not included in main packages
+BuildRequires: golang(github.com/kballard/go-shellquote)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/s3)
+BuildRequires: golang(github.com/coreos/container-linux-config-transpiler/config)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/s3/s3manager)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)
+BuildRequires: golang(github.com/coreos/go-omaha/omaha)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/client)
+BuildRequires: golang(golang.org/x/oauth2/google)
+BuildRequires: golang(github.com/vmware/govmomi/object)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_1/types)
+BuildRequires: golang(github.com/vishvananda/netns)
+BuildRequires: golang(github.com/vishvananda/netlink)
+BuildRequires: golang(github.com/pborman/uuid)
+BuildRequires: golang(golang.org/x/sys/unix)
+BuildRequires: golang(github.com/coreos/ignition/config/shared/errors)
+BuildRequires: golang(github.com/coreos/container-linux-config-transpiler/config/platform)
+BuildRequires: golang(github.com/coreos/pkg/multierror)
+BuildRequires: golang(github.com/vmware/govmomi/find)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/storage)
+BuildRequires: golang(github.com/vmware/govmomi/vim25)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/soap)
+BuildRequires: golang(golang.org/x/crypto/ssh/terminal)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/endpoints)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_0)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/credentials)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/ec2)
+BuildRequires: golang(github.com/coreos/ignition/config/v1/types)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_3)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_2/types)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/awserr)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/request)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/types)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/session)
+BuildRequires: golang(github.com/godbus/dbus)
+BuildRequires: golang(golang.org/x/oauth2)
+BuildRequires: golang(github.com/vincent-petithory/dataurl)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_1)
+BuildRequires: golang(github.com/coreos/ioprogress)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/sts)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_0/types)
+BuildRequires: golang(github.com/coreos/etcd/pkg/types)
+BuildRequires: golang(github.com/coreos/ignition/config/v1)
+BuildRequires: golang(github.com/coreos/coreos-cloudinit/config)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload)
+BuildRequires: golang(github.com/coreos/etcd/etcdserver/api/v2http)
+BuildRequires: golang(github.com/coreos/etcd/etcdserver)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/mo)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_2)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/progress)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_3/types)
+BuildRequires: golang(github.com/pin/tftp)
+BuildRequires: golang(github.com/vmware/govmomi)
+BuildRequires: golang(google.golang.org/api/googleapi)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)
+BuildRequires: golang(golang.org/x/crypto/openpgp)
+BuildRequires: golang(github.com/packethost/packngo)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/location)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/iam)
+BuildRequires: golang(github.com/vmware/govmomi/ovf)
+BuildRequires: golang(github.com/digitalocean/godo)
+%endif
+
+%description
+%{summary}
+
+%if 0%{?with_devel}
+%package devel
+Summary:       %{summary}
+BuildArch:     noarch
+
+%if 0%{?with_check} && ! 0%{?with_bundled}
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/location)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/management/storageservice)
+BuildRequires: golang(github.com/Azure/azure-sdk-for-go/storage)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)
+BuildRequires: golang(github.com/Microsoft/azure-vhd-utils/vhdcore/validator)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/awserr)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/client)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/credentials)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/endpoints)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/request)
+BuildRequires: golang(github.com/aws/aws-sdk-go/aws/session)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/ec2)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/iam)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/s3)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/s3/s3manager)
+BuildRequires: golang(github.com/aws/aws-sdk-go/service/sts)
+BuildRequires: golang(github.com/coreos/container-linux-config-transpiler/config)
+BuildRequires: golang(github.com/coreos/container-linux-config-transpiler/config/platform)
+BuildRequires: golang(github.com/coreos/coreos-cloudinit/config)
+BuildRequires: golang(github.com/coreos/etcd/etcdserver)
+BuildRequires: golang(github.com/coreos/etcd/etcdserver/api/v2http)
+BuildRequires: golang(github.com/coreos/etcd/pkg/types)
+BuildRequires: golang(github.com/coreos/go-omaha/omaha)
+BuildRequires: golang(github.com/coreos/go-semver/semver)
+BuildRequires: golang(github.com/coreos/ignition/config/shared/errors)
+BuildRequires: golang(github.com/coreos/ignition/config/v1)
+BuildRequires: golang(github.com/coreos/ignition/config/v1/types)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_0)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_0/types)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_1)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_1/types)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_2)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_2/types)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_3)
+BuildRequires: golang(github.com/coreos/ignition/config/v2_3/types)
+BuildRequires: golang(github.com/coreos/ioprogress)
+BuildRequires: golang(github.com/coreos/pkg/capnslog)
+BuildRequires: golang(github.com/coreos/pkg/multierror)
+BuildRequires: golang(github.com/digitalocean/godo)
+BuildRequires: golang(github.com/godbus/dbus)
+BuildRequires: golang(github.com/golang/protobuf/proto)
+BuildRequires: golang(github.com/kballard/go-shellquote)
+BuildRequires: golang(github.com/packethost/packngo)
+BuildRequires: golang(github.com/pborman/uuid)
+BuildRequires: golang(github.com/pin/tftp)
+BuildRequires: golang(github.com/spf13/cobra)
+BuildRequires: golang(github.com/vincent-petithory/dataurl)
+BuildRequires: golang(github.com/vishvananda/netlink)
+BuildRequires: golang(github.com/vishvananda/netns)
+BuildRequires: golang(github.com/vmware/govmomi)
+BuildRequires: golang(github.com/vmware/govmomi/find)
+BuildRequires: golang(github.com/vmware/govmomi/object)
+BuildRequires: golang(github.com/vmware/govmomi/ovf)
+BuildRequires: golang(github.com/vmware/govmomi/vim25)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/mo)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/progress)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/soap)
+BuildRequires: golang(github.com/vmware/govmomi/vim25/types)
+BuildRequires: golang(golang.org/x/crypto/openpgp)
+BuildRequires: golang(golang.org/x/crypto/ssh)
+BuildRequires: golang(golang.org/x/crypto/ssh/agent)
+BuildRequires: golang(golang.org/x/crypto/ssh/terminal)
+BuildRequires: golang(golang.org/x/net/context)
+BuildRequires: golang(golang.org/x/oauth2)
+BuildRequires: golang(golang.org/x/oauth2/google)
+BuildRequires: golang(golang.org/x/sys/unix)
+BuildRequires: golang(google.golang.org/api/compute/v1)
+BuildRequires: golang(google.golang.org/api/googleapi)
+BuildRequires: golang(google.golang.org/api/storage/v1)
+%endif
+
+Requires:      golang(github.com/Azure/azure-sdk-for-go/management)
+Requires:      golang(github.com/Azure/azure-sdk-for-go/management/location)
+Requires:      golang(github.com/Azure/azure-sdk-for-go/management/storageservice)
+Requires:      golang(github.com/Azure/azure-sdk-for-go/storage)
+Requires:      golang(github.com/Microsoft/azure-vhd-utils/upload)
+Requires:      golang(github.com/Microsoft/azure-vhd-utils/upload/metadata)
+Requires:      golang(github.com/Microsoft/azure-vhd-utils/vhdcore/common)
+Requires:      golang(github.com/Microsoft/azure-vhd-utils/vhdcore/diskstream)
+Requires:      golang(github.com/Microsoft/azure-vhd-utils/vhdcore/validator)
+Requires:      golang(github.com/aws/aws-sdk-go/aws)
+Requires:      golang(github.com/aws/aws-sdk-go/aws/awserr)
+Requires:      golang(github.com/aws/aws-sdk-go/aws/client)
+Requires:      golang(github.com/aws/aws-sdk-go/aws/credentials)
+Requires:      golang(github.com/aws/aws-sdk-go/aws/endpoints)
+Requires:      golang(github.com/aws/aws-sdk-go/aws/request)
+Requires:      golang(github.com/aws/aws-sdk-go/aws/session)
+Requires:      golang(github.com/aws/aws-sdk-go/service/ec2)
+Requires:      golang(github.com/aws/aws-sdk-go/service/iam)
+Requires:      golang(github.com/aws/aws-sdk-go/service/s3)
+Requires:      golang(github.com/aws/aws-sdk-go/service/s3/s3manager)
+Requires:      golang(github.com/aws/aws-sdk-go/service/sts)
+Requires:      golang(github.com/coreos/container-linux-config-transpiler/config)
+Requires:      golang(github.com/coreos/container-linux-config-transpiler/config/platform)
+Requires:      golang(github.com/coreos/coreos-cloudinit/config)
+Requires:      golang(github.com/coreos/etcd/etcdserver)
+Requires:      golang(github.com/coreos/etcd/etcdserver/api/v2http)
+Requires:      golang(github.com/coreos/etcd/pkg/types)
+Requires:      golang(github.com/coreos/go-omaha/omaha)
+Requires:      golang(github.com/coreos/go-semver/semver)
+Requires:      golang(github.com/coreos/ignition/config/shared/errors)
+Requires:      golang(github.com/coreos/ignition/config/v1)
+Requires:      golang(github.com/coreos/ignition/config/v1/types)
+Requires:      golang(github.com/coreos/ignition/config/v2_0)
+Requires:      golang(github.com/coreos/ignition/config/v2_0/types)
+Requires:      golang(github.com/coreos/ignition/config/v2_1)
+Requires:      golang(github.com/coreos/ignition/config/v2_1/types)
+Requires:      golang(github.com/coreos/ignition/config/v2_2)
+Requires:      golang(github.com/coreos/ignition/config/v2_2/types)
+Requires:      golang(github.com/coreos/ignition/config/v2_3)
+Requires:      golang(github.com/coreos/ignition/config/v2_3/types)
+Requires:      golang(github.com/coreos/ioprogress)
+Requires:      golang(github.com/coreos/pkg/capnslog)
+Requires:      golang(github.com/coreos/pkg/multierror)
+Requires:      golang(github.com/digitalocean/godo)
+Requires:      golang(github.com/godbus/dbus)
+Requires:      golang(github.com/golang/protobuf/proto)
+Requires:      golang(github.com/kballard/go-shellquote)
+Requires:      golang(github.com/packethost/packngo)
+Requires:      golang(github.com/pborman/uuid)
+Requires:      golang(github.com/pin/tftp)
+Requires:      golang(github.com/spf13/cobra)
+Requires:      golang(github.com/vincent-petithory/dataurl)
+Requires:      golang(github.com/vishvananda/netlink)
+Requires:      golang(github.com/vishvananda/netns)
+Requires:      golang(github.com/vmware/govmomi)
+Requires:      golang(github.com/vmware/govmomi/find)
+Requires:      golang(github.com/vmware/govmomi/object)
+Requires:      golang(github.com/vmware/govmomi/ovf)
+Requires:      golang(github.com/vmware/govmomi/vim25)
+Requires:      golang(github.com/vmware/govmomi/vim25/mo)
+Requires:      golang(github.com/vmware/govmomi/vim25/progress)
+Requires:      golang(github.com/vmware/govmomi/vim25/soap)
+Requires:      golang(github.com/vmware/govmomi/vim25/types)
+Requires:      golang(golang.org/x/crypto/openpgp)
+Requires:      golang(golang.org/x/crypto/ssh)
+Requires:      golang(golang.org/x/crypto/ssh/agent)
+Requires:      golang(golang.org/x/crypto/ssh/terminal)
+Requires:      golang(golang.org/x/net/context)
+Requires:      golang(golang.org/x/oauth2)
+Requires:      golang(golang.org/x/oauth2/google)
+Requires:      golang(golang.org/x/sys/unix)
+Requires:      golang(google.golang.org/api/compute/v1)
+Requires:      golang(google.golang.org/api/googleapi)
+Requires:      golang(google.golang.org/api/storage/v1)
+
+Provides:      golang(%{import_path}/auth) = %{version}-%{release}
+Provides:      golang(%{import_path}/cli) = %{version}-%{release}
+Provides:      golang(%{import_path}/cmd/ore/aws) = %{version}-%{release}
+Provides:      golang(%{import_path}/cmd/ore/azure) = %{version}-%{release}
+Provides:      golang(%{import_path}/cmd/ore/do) = %{version}-%{release}
+Provides:      golang(%{import_path}/cmd/ore/esx) = %{version}-%{release}
+Provides:      golang(%{import_path}/cmd/ore/gcloud) = %{version}-%{release}
+Provides:      golang(%{import_path}/cmd/ore/packet) = %{version}-%{release}
+Provides:      golang(%{import_path}/harness) = %{version}-%{release}
+Provides:      golang(%{import_path}/harness/reporters) = %{version}-%{release}
+Provides:      golang(%{import_path}/harness/testresult) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/cluster) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/register) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/registry) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/coretest) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/crio) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/docker) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/etcd) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/flannel) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/ignition) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/kubernetes) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/locksmith) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/metadata) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/misc) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/ostree) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/packages) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/podman) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/rkt) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/rpmostree) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/systemd) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/torcx) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/update) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/tests/util) = %{version}-%{release}
+Provides:      golang(%{import_path}/kola/torcx) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang/bufpipe) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang/destructor) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang/maps) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang/natsort) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang/reader) = %{version}-%{release}
+Provides:      golang(%{import_path}/lang/worker) = %{version}-%{release}
+Provides:      golang(%{import_path}/network) = %{version}-%{release}
+Provides:      golang(%{import_path}/network/bufnet) = %{version}-%{release}
+Provides:      golang(%{import_path}/network/journal) = %{version}-%{release}
+Provides:      golang(%{import_path}/network/mockssh) = %{version}-%{release}
+Provides:      golang(%{import_path}/network/neterror) = %{version}-%{release}
+Provides:      golang(%{import_path}/network/ntp) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/api/aws) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/api/azure) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/api/do) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/api/esx) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/api/gcloud) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/api/packet) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/conf) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/local) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/machine/aws) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/machine/do) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/machine/esx) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/machine/gcloud) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/machine/packet) = %{version}-%{release}
+Provides:      golang(%{import_path}/platform/machine/qemu) = %{version}-%{release}
+Provides:      golang(%{import_path}/sdk) = %{version}-%{release}
+Provides:      golang(%{import_path}/sdk/omaha) = %{version}-%{release}
+Provides:      golang(%{import_path}/sdk/repo) = %{version}-%{release}
+Provides:      golang(%{import_path}/storage) = %{version}-%{release}
+Provides:      golang(%{import_path}/storage/index) = %{version}-%{release}
+Provides:      golang(%{import_path}/system) = %{version}-%{release}
+Provides:      golang(%{import_path}/system/exec) = %{version}-%{release}
+Provides:      golang(%{import_path}/system/ns) = %{version}-%{release}
+Provides:      golang(%{import_path}/system/targen) = %{version}-%{release}
+Provides:      golang(%{import_path}/system/user) = %{version}-%{release}
+Provides:      golang(%{import_path}/update) = %{version}-%{release}
+Provides:      golang(%{import_path}/update/generator) = %{version}-%{release}
+Provides:      golang(%{import_path}/update/metadata) = %{version}-%{release}
+Provides:      golang(%{import_path}/update/signature) = %{version}-%{release}
+Provides:      golang(%{import_path}/util) = %{version}-%{release}
+Provides:      golang(%{import_path}/version) = %{version}-%{release}
+
+%description devel
+%{summary}
+
+This package contains library source intended for
+building other packages which use import path with
+%{import_path} prefix.
+%endif
+
+%if 0%{?with_unit_test} && 0%{?with_devel}
+%package unit-test-devel
+Summary:         Unit tests for %{name} package
+%if 0%{?with_check}
+#Here comes all BuildRequires: PACKAGE the unit tests
+#in %%check section need for running
+%endif
+
+# test subpackage tests code from devel subpackage
+Requires:        %{name}-devel = %{version}-%{release}
+
+%if 0%{?with_check} && ! 0%{?with_bundled}
+BuildRequires: golang(github.com/kylelemons/godebug/diff)
+BuildRequires: golang(github.com/kylelemons/godebug/pretty)
+BuildRequires: golang(golang.org/x/crypto/openpgp/errors)
+%endif
+
+Requires:      golang(github.com/kylelemons/godebug/diff)
+Requires:      golang(github.com/kylelemons/godebug/pretty)
+Requires:      golang(golang.org/x/crypto/openpgp/errors)
+
+%description unit-test-devel
+%{summary}
+
+This package contains unit tests for project
+providing packages with %{import_path} prefix.
+%endif
+
+%prep
+%setup -q -n %{repo}-%{commit}
+
+%build
+mkdir -p src/%{provider}.%{provider_tld}/%{project}
+ln -s ../../../ src/%{import_path}
+
+%if ! 0%{?with_bundled}
+export GOPATH=$(pwd):%{gopath}
+%else
+# No dependency directories so far
+export GOPATH=$(pwd):%{gopath}
+%endif
+
+#%gobuild -o bin/cmd/cork %{import_path}/cmd/cork
+#%gobuild -o bin/cmd/gangue %{import_path}/cmd/gangue
+#%gobuild -o bin/cmd/kola %{import_path}/cmd/kola
+#%gobuild -o bin/cmd/kolet %{import_path}/cmd/kolet
+#%gobuild -o bin/cmd/ore %{import_path}/cmd/ore
+#%gobuild -o bin/cmd/plume %{import_path}/cmd/plume
+#%gobuild -o bin/harness/_example %{import_path}/harness/_example
+#%gobuild -o bin/network/journal/_test %{import_path}/network/journal/_test
+#%gobuild -o bin/network/ntp/_ntpd %{import_path}/network/ntp/_ntpd
+#%gobuild -o bin/update/_apply %{import_path}/update/_apply
+#%gobuild -o bin/update/_dump %{import_path}/update/_dump
+
+%install
+install -d -p %{buildroot}%{_bindir}
+#install -p -m 0755 bin/cmd/cork %{buildroot}%{_bindir}
+#install -p -m 0755 bin/cmd/gangue %{buildroot}%{_bindir}
+#install -p -m 0755 bin/cmd/kola %{buildroot}%{_bindir}
+#install -p -m 0755 bin/cmd/kolet %{buildroot}%{_bindir}
+#install -p -m 0755 bin/cmd/ore %{buildroot}%{_bindir}
+#install -p -m 0755 bin/cmd/plume %{buildroot}%{_bindir}
+#install -p -m 0755 bin/harness/_example %{buildroot}%{_bindir}
+#install -p -m 0755 bin/network/journal/_test %{buildroot}%{_bindir}
+#install -p -m 0755 bin/network/ntp/_ntpd %{buildroot}%{_bindir}
+#install -p -m 0755 bin/update/_apply %{buildroot}%{_bindir}
+#install -p -m 0755 bin/update/_dump %{buildroot}%{_bindir}
+
+# source codes for building projects
+%if 0%{?with_devel}
+install -d -p %{buildroot}/%{gopath}/src/%{import_path}/
+echo "%%dir %%{gopath}/src/%%{import_path}/." >> devel.file-list
+# find all *.go but no *_test.go files and generate devel.file-list
+for file in $(find . \( -iname "*.go" -or -iname "*.s" \) \! -iname "*_test.go" | grep -v "vendor") ; do
+    dirprefix=$(dirname $file)
+    install -d -p %{buildroot}/%{gopath}/src/%{import_path}/$dirprefix
+    cp -pav $file %{buildroot}/%{gopath}/src/%{import_path}/$file
+    echo "%%{gopath}/src/%%{import_path}/$file" >> devel.file-list
+
+    while [ "$dirprefix" != "." ]; do
+        echo "%%dir %%{gopath}/src/%%{import_path}/$dirprefix" >> devel.file-list
+        dirprefix=$(dirname $dirprefix)
+    done
+done
+%endif
+
+# testing files for this project
+%if 0%{?with_unit_test} && 0%{?with_devel}
+install -d -p %{buildroot}/%{gopath}/src/%{import_path}/
+# find all *_test.go files and generate unit-test-devel.file-list
+for file in $(find . -iname "*_test.go" | grep -v "vendor") ; do
+    dirprefix=$(dirname $file)
+    install -d -p %{buildroot}/%{gopath}/src/%{import_path}/$dirprefix
+    cp -pav $file %{buildroot}/%{gopath}/src/%{import_path}/$file
+    echo "%%{gopath}/src/%%{import_path}/$file" >> unit-test-devel.file-list
+
+    while [ "$dirprefix" != "." ]; do
+        echo "%%dir %%{gopath}/src/%%{import_path}/$dirprefix" >> devel.file-list
+        dirprefix=$(dirname $dirprefix)
+    done
+done
+%endif
+
+%if 0%{?with_devel}
+sort -u -o devel.file-list devel.file-list
+%endif
+
+%check
+%if 0%{?with_check} && 0%{?with_unit_test} && 0%{?with_devel}
+%if ! 0%{?with_bundled}
+export GOPATH=%{buildroot}/%{gopath}:%{gopath}
+%else
+# Since we aren't packaging up the vendor directory we need to link
+# back to it somehow. Hack it up so that we can add the vendor
+# directory from BUILD dir as a gopath to be searched when executing
+# tests from the BUILDROOT dir.
+ln -s ./ ./vendor/src # ./vendor/src -> ./vendor
+
+export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
+%endif
+
+%if ! 0%{?gotest:1}
+%global gotest go test
+%endif
+
+%gotest %{import_path}/harness
+%gotest %{import_path}/lang/bufpipe
+%gotest %{import_path}/lang/maps
+%gotest %{import_path}/lang/natsort
+%gotest %{import_path}/lang/reader
+%gotest %{import_path}/network
+%gotest %{import_path}/network/bufnet
+%gotest %{import_path}/network/journal
+%gotest %{import_path}/network/mockssh
+%gotest %{import_path}/network/ntp
+%gotest %{import_path}/platform/conf
+%gotest %{import_path}/sdk
+%gotest %{import_path}/sdk/repo
+%gotest %{import_path}/storage
+%gotest %{import_path}/system
+%gotest %{import_path}/system/exec
+%gotest %{import_path}/system/targen
+%gotest %{import_path}/system/user
+%gotest %{import_path}/update/generator
+%gotest %{import_path}/update/signature
+%endif
+
+#define license tag if not already defined
+%{!?_licensedir:%global license %doc}
+
+%files
+%license LICENSE
+%doc README.md platforms.md code-of-conduct.md runner-readme.md CONTRIBUTING.md
+#%{_bindir}/cmd/cork
+#%{_bindir}/cmd/gangue
+#%{_bindir}/cmd/kola
+#%{_bindir}/cmd/kolet
+#%{_bindir}/cmd/ore
+#%{_bindir}/cmd/plume
+#%{_bindir}/harness/_example
+#%{_bindir}/network/journal/_test
+#%{_bindir}/network/ntp/_ntpd
+#%{_bindir}/update/_apply
+#%{_bindir}/update/_dump
+
+%if 0%{?with_devel}
+%files devel -f devel.file-list
+%license LICENSE
+%doc README.md platforms.md code-of-conduct.md runner-readme.md CONTRIBUTING.md
+%dir %{gopath}/src/%{provider}.%{provider_tld}/%{project}
+%endif
+
+%if 0%{?with_unit_test} && 0%{?with_devel}
+%files unit-test-devel -f unit-test-devel.file-list
+%license LICENSE
+%doc README.md platforms.md code-of-conduct.md runner-readme.md CONTRIBUTING.md
+%endif
+
+%changelog* Thu Jan 10 2019 root - 0-0.1.git490b74e
+- First package for Fedora
+

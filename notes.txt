@@ -1,0 +1,94 @@
+## Building the RPM
+
+#### Generating the specfile
+
+The instructions uses gofed as a tool to build the spec file from the Go repo.
+
+```
+$ podman run -it --rm -v $PWD:/foo/:z  --entrypoint /bin/bash gofed/gofed:v1.0.1
+```
+
+```
+[root@093dd1e70f13 foo]# gofed repo2spec --detect github.com/coreos/mantle --commit 490b74e13080d984385ccc2daec22d995a483d3f --with-extra --with-build -f
+Repo URL: github.com/coreos/mantle
+Commit: 490b74e13080d984385ccc2daec22d995a483d3f
+Name: golang-github-coreos-mantle
+
+(1/4) Checking if the package already exists in PkgDB
+(2/4) Collecting data
+(3/4) Generating spec file
+(4/4) Discovering golang dependencies
+Discovering package dependencies
+	Class: github.com/Azure/azure-sdk-for-go (golang-github-Azure-azure-sdk-for-go) PkgDB=False
+	Class: github.com/Microsoft/azure-vhd-utils (golang-github-Microsoft-azure-vhd-utils) PkgDB=False
+	Class: github.com/aws/aws-sdk-go (golang-github-aws-aws-sdk-go) PkgDB=False
+	Class: github.com/coreos/container-linux-config-transpiler (golang-github-coreos-container-linux-config-transpiler) PkgDB=False
+	Class: github.com/coreos/coreos-cloudinit (golang-github-coreos-coreos-cloudinit) PkgDB=False
+	Class: github.com/coreos/etcd (etcd) PkgDB=False
+	Class: github.com/coreos/go-omaha (golang-github-coreos-go-omaha) PkgDB=False
+	Class: github.com/coreos/go-semver (golang-github-coreos-go-semver) PkgDB=False
+	Class: github.com/coreos/ignition (golang-github-coreos-ignition) PkgDB=False
+	Class: github.com/coreos/ioprogress (golang-github-coreos-ioprogress) PkgDB=False
+	Class: github.com/coreos/pkg (golang-github-coreos-pkg) PkgDB=False
+	Class: github.com/digitalocean/godo (golang-github-digitalocean-godo) PkgDB=False
+	Class: github.com/godbus/dbus (golang-github-godbus-dbus) PkgDB=False
+	Class: github.com/golang/protobuf (golang-googlecode-goprotobuf) PkgDB=False
+	Class: github.com/kballard/go-shellquote (golang-github-kballard-go-shellquote) PkgDB=False
+	Class: github.com/packethost/packngo (golang-github-packethost-packngo) PkgDB=False
+	Class: github.com/pborman/uuid (golang-googlecode-uuid) PkgDB=False
+	Class: github.com/pin/tftp (golang-github-pin-tftp) PkgDB=False
+	Class: github.com/spf13/cobra (golang-github-spf13-cobra) PkgDB=False
+	Class: github.com/vincent-petithory/dataurl (golang-github-vincent-petithory-dataurl) PkgDB=False
+	Class: github.com/vishvananda/netlink (golang-github-vishvananda-netlink) PkgDB=False
+	Class: github.com/vishvananda/netns (golang-github-vishvananda-netns) PkgDB=False
+	Class: github.com/vmware/govmomi (golang-github-vmware-govmomi) PkgDB=False
+	Class: golang.org/x/crypto (golang-googlecode-go-crypto) PkgDB=False
+	Class: golang.org/x/net (golang-googlecode-net) PkgDB=False
+	Class: golang.org/x/oauth2 (golang-googlecode-goauth2) PkgDB=False
+	Class: golang.org/x/sys (golang-github-golang-sys) PkgDB=False
+	Class: google.golang.org/api (golang-googlegolangorg-api) PkgDB=False
+
+Discovering test dependencies
+	Class: github.com/kylelemons/godebug (golang-github-kylelemons-godebug) PkgDB=False
+	Class: golang.org/x/crypto (golang-googlecode-go-crypto) PkgDB=False
+
+Spec file golang-github-coreos-mantle.spec at /foo/golang-github-coreos-mantle
+```
+The file will me in local /path/to/podman/mount/directory/golang-github-coreos-mantle/golang-github-coreos-mantle.spec
+
+#### Fetching the Source
+
+Inside the container, run `gofed fetch`
+
+```
+[root@093dd1e70f13 golang-github-coreos-mantle]# gofed fetch --spec
+Detecting spec file in the current directory...
+'golang-github-coreos-mantle.spec' detected
+Parsing spec file
+ipprefix: github.com/coreos/mantle
+commit: 490b74e13080d984385ccc2daec22d995a483d3f
+Fetching https://github.com/coreos/mantle/archive/490b74e13080d984385ccc2daec22d995a483d3f/mantle-490b74e.tar.gz ...
+```
+
+#### Generating the bundled provides
+Run the parsedeps.go file in to generate the bundled provides, and copy it to the spec file. Pipe it with sort to get the sorted output
+
+```
+➜  mantle git:(master) ✗ go run /path/to/podman/mount/dir/golang-github-coreos-mantle/parsedeps.go| sort
+```
+
+#### Building the rpm
+
+Copy the source into the sources directory
+
+```
+$ cp <mantle source tar file> $HOME/rpmbuild/SOURCES/
+$ rpmbuild -ba golang-github-coreos-mantle.spec
+$ rpm -qpR $HOME/rpmbuild/RPMS/x86_64/golang-github-coreos-mantle-0-0.1.git490b74e.fc29.x86_64.rpm
+$ fedora-packer-setup
+$ kinit <FAS Username>@fedoraproject.org
+$ koji build --scratch rawhide $HOME/rpmbuild/SRPMS/golang-github-coreos-mantle-0-0.1.git490b74e.fc29.src.rpm
+$ koji build --scratch epel7 $HOME/rpmbuild/SRPMS/golang-github-coreos-mantle-0-0.1.git490b74e.fc29.src.rpm
+```
+
+
