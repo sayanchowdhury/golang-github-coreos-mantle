@@ -43,11 +43,11 @@
 %global commit          490b74e13080d984385ccc2daec22d995a483d3f
 %global shortcommit     %(c=%{commit}; echo ${c:0:7})
 
-Name:           golang-%{provider}-%{project}-%{repo}
+Name:           %{repo}
 Version:        0
 Release:        0.1.git%{shortcommit}%{?dist}
 Summary:        Collection of tools for managing cloud images.
-License:        ASL2.0
+License:        ASL 2.0
 URL:            https://%{provider_prefix}
 Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
