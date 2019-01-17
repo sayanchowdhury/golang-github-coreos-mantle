@@ -46,8 +46,9 @@
 Name:           %{repo}
 Version:        0
 Release:        0.1.git%{shortcommit}%{?dist}
-Summary:        Collection of tools for managing cloud images.
+Summary:        Collection of tools for managing cloud images
 License:        ASL 2.0
+BuildArch:      noarch
 URL:            https://%{provider_prefix}
 Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
@@ -83,8 +84,6 @@ BuildRequires: golang(golang.org/x/net/context)
 BuildRequires: golang(google.golang.org/api/storage/v1)
 # network/ntp/_ntpd/ntpd.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
-# cmd/gangue/gangue.go
-BuildRequires: golang(github.com/spf13/cobra)
 # cmd/kolet/kolet.go
 BuildRequires: golang(github.com/coreos/pkg/capnslog)
 BuildRequires: golang(github.com/spf13/cobra)
@@ -710,12 +709,6 @@ Summary: A tool for releasing cloud images
 %description plume
 %{summary}
 
-################ gangue subpackage #############
-%package gangue
-Summary: A tool for downloading from Google Storage
-%description gangue
-%{summary}
-
 %if 0%{?with_unit_test} && 0%{?with_devel}
 %package unit-test-devel
 Summary:         Unit tests for %{name} package
@@ -759,7 +752,6 @@ export GOPATH=$(pwd):%{gopath}
 %endif
 
 # Cork is not included as it is an Container Linux development tool
-%gobuild -o bin/cmd/gangue %{import_path}/cmd/gangue
 %gobuild -o bin/cmd/kola %{import_path}/cmd/kola
 %gobuild -o bin/cmd/kolet %{import_path}/cmd/kolet
 %gobuild -o bin/cmd/ore %{import_path}/cmd/ore
@@ -767,7 +759,6 @@ export GOPATH=$(pwd):%{gopath}
 
 %install
 install -d -p %{buildroot}%{_bindir}
-install -p -m 0755 bin/cmd/gangue %{buildroot}%{_bindir}
 install -p -m 0755 bin/cmd/kola %{buildroot}%{_bindir}
 install -p -m 0755 bin/cmd/kolet %{buildroot}%{_bindir}
 install -p -m 0755 bin/cmd/ore %{buildroot}%{_bindir}
@@ -861,18 +852,19 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 
 %files kola
 %{_bindir}/kola
+%license LICENSE
 
 %files kolet
 %{_bindir}/kolet
+%license LICENSE
 
 %files ore
 %{_bindir}/ore
+%license LICENSE
 
 %files plume
 %{_bindir}/plume
-
-%files gangue
-%{_bindir}/gangue
+%license LICENSE
 
 %if 0%{?with_devel}
 %files devel -f devel.file-list
