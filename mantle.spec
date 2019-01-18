@@ -48,7 +48,6 @@ Version:        0
 Release:        0.1.git%{shortcommit}%{?dist}
 Summary:        Collection of tools for managing cloud images
 License:        ASL 2.0
-BuildArch:      noarch
 URL:            https://%{provider_prefix}
 Source0:        https://%{provider_prefix}/archive/%{commit}/%{repo}-%{shortcommit}.tar.gz
 
