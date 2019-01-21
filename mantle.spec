@@ -842,9 +842,6 @@ export GOPATH=%{buildroot}/%{gopath}:$(pwd)/vendor:%{gopath}
 %gotest %{import_path}/update/signature
 %endif
 
-#define license tag if not already defined
-%{!?_licensedir:%global license %doc}
-
 %files
 %license LICENSE
 %doc README.md platforms.md code-of-conduct.md runner-readme.md CONTRIBUTING.md
